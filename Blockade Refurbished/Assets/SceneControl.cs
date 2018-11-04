@@ -38,10 +38,7 @@ public class SceneControl : MonoBehaviour {
 		// Checks for the WinCondition to be fufilled in the PlayerController Script
 		if (m_scene.name == "MainMenu")
 		{
-			//GameObject player = GameObject.Find("player");
-			//PlayerController p = player.GetComponent<PlayerController>();
-        
-        
+
 			//if (Input.GetKeyDown(KeyCode.Space) && p.WinState)
 			if (Input.GetKeyDown(KeyCode.Space))
 			{

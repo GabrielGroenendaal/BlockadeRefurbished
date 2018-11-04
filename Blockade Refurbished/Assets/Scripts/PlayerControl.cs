@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Facebook.Unity.Settings;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +22,7 @@ public class PlayerControl : MonoBehaviour {
 	public KeyCode upInput; public KeyCode downInput; public KeyCode rightInput; public KeyCode leftInput;
 
 	// These variables are for other important values: the player's current score and their position on the map
-	private int score;
+	private int score = 0;
 	public Text countText;
 	private int Xpos;
 	private int Ypos;
