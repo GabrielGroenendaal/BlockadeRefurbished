@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Facebook.Unity.Settings;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,14 +10,13 @@ using UnityEngine.UI;
 public class PlayerControl : MonoBehaviour {
 	
 	// These variables are for storing references to the player art assets necessary for the arrows, the snakes, and to identify the sprites
-	public Sprite happy; public Sprite body; public Sprite unhappy;
-	public Sprite up; public Sprite down; public Sprite left; public Sprite right;
-	public Sprite empty;
+	public Sprite body; public Sprite up; public Sprite down; public Sprite left; public Sprite right; public Sprite empty;
 	
 	// This variable stores a reference to the opposing player's PlayerControl class, to raise their score if you collide
 	public PlayerControl opponent;
 	
 	// These variables store the audio clips that will play when each character moves
+	public bool musicPlay;
 	public AudioSource beep;
 	
 	// These variables are for storing the directional inputs for each player, which are inputted through Unity
@@ -60,31 +60,37 @@ public class PlayerControl : MonoBehaviour {
 		if (Input.GetKeyDown(downInput) && previousInput!=upInput)
 		{
 			input = downInput;
-			arrow(down,Xpos,Ypos-1);
+			grid.board[Xpos, Ypos].GetComponent<Image>().sprite = down;
 		}
 		
 		// This repeats for the remaining other directional inputs
 		else if (Input.GetKeyDown(upInput) && previousInput!=downInput)
 		{
 			input = upInput;
-			arrow(up,Xpos,Ypos+1);
+			grid.board[Xpos, Ypos].GetComponent<Image>().sprite = up;
 		}
 		else if (Input.GetKeyDown(rightInput) && previousInput!=leftInput)
 		{
 			input = rightInput;
-			arrow(right,Xpos+1,Ypos);
+			grid.board[Xpos, Ypos].GetComponent<Image>().sprite = right;
 		}
 		else if (Input.GetKeyDown(leftInput) && previousInput!=rightInput)
 		{
 			input = leftInput;
-			arrow(left,Xpos-1,Ypos);
+			grid.board[Xpos, Ypos].GetComponent<Image>().sprite = left;
 		}
 		
 		// Now this code will check the inputs every .45 seconds to move the players accordingly 
 		if (targetTime <= 0.0f)
 		{
-			targetTime = .25f; // Reset the Timer
-			
+			targetTime = .15f; // Reset the Timer
+
+			if (musicPlay == false)
+			{
+				beep.Play(0);
+				beep.loop = true;
+				musicPlay = true;
+			}
 			
 			// This code is a bit complicated. First it checks the tile that a player would move to given their current stored input
 			if (input == downInput)
@@ -93,7 +99,7 @@ public class PlayerControl : MonoBehaviour {
 				// If the sprite stored on that panel is (A) not the determined 'empty' sprite or (B) the appropiate arrow sprite for the input
 				// Then this indicates a collision, we first check to see that the other player will not collide.
 				// If so, they resetting the board and give the opponent a point
-				if (grid.board[Xpos, Ypos - 1].GetComponent<Image>().sprite != empty && grid.board[Xpos, Ypos - 1].GetComponent<Image>().sprite != down)
+				if (grid.board[Xpos, Ypos - 1].GetComponent<Image>().sprite != empty)
 				{
 					if (checkOpponent() == false)
 					{
@@ -111,10 +117,8 @@ public class PlayerControl : MonoBehaviour {
 				// And the arrow position is reset
 				else
 				{
-					grid.board[Xpos, Ypos - 1].GetComponent<Image>().sprite = happy;
+					grid.board[Xpos, Ypos - 1].GetComponent<Image>().sprite = down;
 					grid.board[Xpos, Ypos].GetComponent<Image>().sprite = body;
-					arrowXpos = 0; arrowYpos = 0;
-					arrow(down,Xpos,Ypos-2);
 					previousInput = input;
 					Ypos = Ypos - 1;
 				}
@@ -123,7 +127,7 @@ public class PlayerControl : MonoBehaviour {
 			// This repeats for every other possible input.
 			else if (input == upInput)
 			{
-				if (grid.board[Xpos, Ypos + 1].GetComponent<Image>().sprite != empty && grid.board[Xpos, Ypos + 1].GetComponent<Image>().sprite != up)
+				if (grid.board[Xpos, Ypos + 1].GetComponent<Image>().sprite != empty)
 				{
 					if (checkOpponent() == false)
 					{
@@ -138,10 +142,8 @@ public class PlayerControl : MonoBehaviour {
 				}
 				else
 				{
-					grid.board[Xpos, Ypos + 1].GetComponent<Image>().sprite = happy;
+					grid.board[Xpos, Ypos + 1].GetComponent<Image>().sprite = up;
 					grid.board[Xpos, Ypos].GetComponent<Image>().sprite = body;
-					arrowXpos = 0; arrowYpos = 0;
-					arrow(up,Xpos,Ypos+2);
 					previousInput = input;
 					Ypos = Ypos + 1;
 				}
@@ -149,7 +151,7 @@ public class PlayerControl : MonoBehaviour {
 			
 			else if (input == leftInput)
 			{
-				if (grid.board[Xpos - 1, Ypos].GetComponent<Image>().sprite != empty && grid.board[Xpos - 1, Ypos].GetComponent<Image>().sprite != left)
+				if (grid.board[Xpos - 1, Ypos].GetComponent<Image>().sprite != empty)
 				{
 					if (checkOpponent() == false)
 					{
@@ -164,10 +166,8 @@ public class PlayerControl : MonoBehaviour {
 				}
 				else
 				{
-					grid.board[Xpos - 1, Ypos].GetComponent<Image>().sprite = happy;
+					grid.board[Xpos - 1, Ypos].GetComponent<Image>().sprite = left;
 					grid.board[Xpos, Ypos].GetComponent<Image>().sprite = body;
-					arrowXpos = 0; arrowYpos = 0;
-					arrow(left,Xpos-2,Ypos);
 					previousInput = input;
 					Xpos = Xpos - 1;
 				}
@@ -175,7 +175,7 @@ public class PlayerControl : MonoBehaviour {
 			
 			else if (input == rightInput)
 			{
-				if (grid.board[Xpos + 1, Ypos].GetComponent<Image>().sprite != empty && grid.board[Xpos + 1, Ypos].GetComponent<Image>().sprite != right)
+				if (grid.board[Xpos + 1, Ypos].GetComponent<Image>().sprite != empty)
 				{
 					if (checkOpponent() == false)
 					{
@@ -190,35 +190,12 @@ public class PlayerControl : MonoBehaviour {
 				}
 				else
 				{
-					grid.board[Xpos + 1, Ypos].GetComponent<Image>().sprite = happy;
+					grid.board[Xpos + 1, Ypos].GetComponent<Image>().sprite = right;
 					grid.board[Xpos, Ypos].GetComponent<Image>().sprite = body;
-					arrowXpos = 0; arrowYpos = 0;
-					arrow(right,Xpos+2,Ypos);
 					previousInput = input;
 					Xpos = Xpos + 1;
 				}
 			}
-			beep.Play(0);
-			}
-	}
-	
-	
-	// This code determines where the arrow tokens are placed
-	// Arrow sprites are placed only on empty tiles
-	// It also clears the previous position of the arrow (so that there aren't multiple arrows)
-	// And stores the position the current arrow to clear it in the future
-	void arrow(Sprite d, int x, int y)
-	{
-		if (arrowXpos != 0)
-		{
-			grid.board[arrowXpos, arrowYpos].GetComponent<Image>().sprite = empty;
-		}
-		
-		if (grid.board[x, y].GetComponent<Image>().sprite == empty || grid.board[x, y].GetComponent<Image>().sprite == d)
-		{
-			grid.board[x, y].GetComponent<Image>().sprite = d;
-			arrowXpos = x;
-			arrowYpos = y;
 		}
 	}
 	
@@ -231,7 +208,7 @@ public class PlayerControl : MonoBehaviour {
 			{
 				// If the sprite stored on that panel is (A) not the determined 'empty' sprite or (B) the appropiate arrow sprite for the input
 				// Then this indicates a collision, resetting the board and lowering the offending players score by 1
-				if (grid.board[opponent.Xpos, opponent.Ypos - 1].GetComponent<Image>().sprite != empty && grid.board[opponent.Xpos, opponent.Ypos - 1].GetComponent<Image>().sprite != opponent.down)
+				if (grid.board[opponent.Xpos, opponent.Ypos - 1].GetComponent<Image>().sprite != empty)
 				{
 					return true;
 				}
@@ -244,7 +221,7 @@ public class PlayerControl : MonoBehaviour {
 		// This repeats for every other possible input.
 		else if (opponent.input == opponent.upInput)
 			{
-				if (grid.board[opponent.Xpos, opponent.Ypos + 1].GetComponent<Image>().sprite != empty && grid.board[opponent.Xpos, opponent.Ypos + 1].GetComponent<Image>().sprite != opponent.up)
+				if (grid.board[opponent.Xpos, opponent.Ypos + 1].GetComponent<Image>().sprite != empty)
 				{
 					return true;
 				}
@@ -256,7 +233,7 @@ public class PlayerControl : MonoBehaviour {
 			
 		else if (opponent.input == opponent.leftInput)
 			{
-				if (grid.board[opponent.Xpos - 1, opponent.Ypos].GetComponent<Image>().sprite != empty && grid.board[opponent.Xpos - 1, opponent.Ypos].GetComponent<Image>().sprite != opponent.left)
+				if (grid.board[opponent.Xpos - 1, opponent.Ypos].GetComponent<Image>().sprite != empty)
 				{
 					return true;
 				}
@@ -268,8 +245,7 @@ public class PlayerControl : MonoBehaviour {
 			
 		else if (opponent.input == opponent.rightInput)
 		{
-			if (grid.board[opponent.Xpos + 1, opponent.Ypos].GetComponent<Image>().sprite != empty &&
-			    grid.board[opponent.Xpos + 1, opponent.Ypos].GetComponent<Image>().sprite != opponent.right)
+			if (grid.board[opponent.Xpos + 1, opponent.Ypos].GetComponent<Image>().sprite != empty)
 			{
 				return true;
 			}
@@ -310,15 +286,6 @@ public class PlayerControl : MonoBehaviour {
 	{
 		previousInput = k;
 		input = k;
-
-		if (k == upInput)
-		{
-			arrow(up, Xpos, Ypos + 1);
-		}
-
-		if (k == downInput) {
-			arrow(down, Xpos, Ypos-1);
-		}
 	}	
 	
 	// A simple method for retrieving the score, used by the SceneManager to determine if the game is over

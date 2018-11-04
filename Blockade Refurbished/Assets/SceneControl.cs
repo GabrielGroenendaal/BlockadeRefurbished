@@ -55,8 +55,8 @@ public class SceneControl : MonoBehaviour {
 		{
 			winningPlayerName = "Player 1";
 			losingPlayerName = "Player 2";
-			winningPlayer = player2.happy;
-			losingPlayer = player1.unhappy;
+			winningPlayer = player2.up;
+			losingPlayer = player1.up;
 			SceneManager.LoadScene(2);
 		}
         
@@ -64,8 +64,8 @@ public class SceneControl : MonoBehaviour {
 		{
 			winningPlayerName = "Player 2";
 			losingPlayerName = "Player 1";
-			winningPlayer = player1.happy;
-			losingPlayer = player2.unhappy;
+			winningPlayer = player1.up;
+			losingPlayer = player2.up;
 			SceneManager.LoadScene(2);      
 		}
                 
@@ -83,13 +83,13 @@ public class SceneControl : MonoBehaviour {
 			
 			if (winningPlayerName == "Player 1")
 			{
-				playerVictory.color = Color.magenta;
-				playerLoss.color = Color.yellow;	
+				playerVictory.color = Color.green;
+				playerLoss.color = Color.magenta;	
 			}
 			else
 			{
-				playerVictory.color = Color.yellow;
-				playerLoss.color = Color.magenta;
+				playerVictory.color = Color.magenta;
+				playerLoss.color = Color.green;
 			}
 			
 			// Finally, this last piece of coat allows us to return to the main menu

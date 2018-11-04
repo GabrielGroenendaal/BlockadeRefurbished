@@ -93,6 +93,9 @@ public class GameController : MonoBehaviour {
 				board[k, i].GetComponent<Image>().sprite = empty;
 			}
 		}
+
+		player_one.beep.Stop();
+		player_two.beep.Stop();
 		
 		// We then set the positions of the players and set their inputs to the default position
 		board[4, 10].GetComponent<Image>().sprite = player1;
@@ -113,6 +116,8 @@ public class GameController : MonoBehaviour {
 		player_one.targetTime = 2.0f;
 		player_two.targetTime = 2.0f;
 		targetTime = 2.0f;
+		player_one.musicPlay = false;
+		player_two.musicPlay = false;
 		beep.Play(0);
 	}
 	
